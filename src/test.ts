@@ -80,9 +80,10 @@ test('only last emitted promise resolves', async () => {
 test('only last emitted promise rejects', async () => {
   // Given
   const delay = 10;
+  const error = new Error(':s');
   const asyncFunction = async (arg: number, arg2: string) => {
     await delayPromise(delay);
-    throw new Error(':s');
+    throw error;
   };
   const wrappedAsyncFunction = onlyResolvesLast(asyncFunction);
   // When
@@ -94,5 +95,8 @@ test('only last emitted promise rejects', async () => {
   await expectPromisePending(promise1);
   await expectPromisePending(promise2);
   await expectPromiseRejected(promise3);
-  await expect(promise3).rejects.toThrow(':s');
+  // see https://github.com/facebook/jest/issues/3601#issuecomment-310134495
+  await expect(promise3).rejects.toMatchObject({
+    message: error.message,
+  });
 });
