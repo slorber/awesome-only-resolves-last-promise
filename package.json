@@ -1,11 +1,12 @@
 {
   "name": "awesome-only-resolves-last-promise",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Wraps an async function and ensure only last call will actually resolve/reject",
   "author": "slorber",
   "license": "MIT",
   "repository": "slorber/awesome-only-resolves-last-promise",
   "main": "dist/index.js",
+  "types": "dist/index.d.js",
   "module": "dist/index.es.js",
   "jsnext:main": "dist/index.es.js",
   "engines": {
