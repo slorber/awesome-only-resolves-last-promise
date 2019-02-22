@@ -3,18 +3,21 @@ import {
   CancelCallback,
 } from 'awesome-imperative-promise';
 
-// see https://stackoverflow.com/q/54806028/82609
-type AsyncFunction<I extends Array<any>, O> = (...inputs: I) => Promise<O>;
+type ArgumentsType<T> = T extends (...args: infer A) => any ? A : never;
 
-export function onlyResolvesLast<I extends any[], O>(
-  asyncFunction: AsyncFunction<I, O>,
-): AsyncFunction<I, O> {
+// see https://stackoverflow.com/a/54825370/82609
+export function onlyResolvesLast<T extends (...args: any[]) => any>(
+  asyncFunction: T,
+): T {
   let cancelPrevious: CancelCallback | null = null;
-  return function wrappedAsyncFunction(...args) {
+
+  const wrappedFunction = (...args: ArgumentsType<T>) => {
     cancelPrevious && cancelPrevious();
     const initialPromise = asyncFunction(...args);
     const { promise, cancel } = createImperativePromise(initialPromise);
     cancelPrevious = cancel;
     return promise;
   };
+
+  return wrappedFunction as any; // TODO fix TS
 }
