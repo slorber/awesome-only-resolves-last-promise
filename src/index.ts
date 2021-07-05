@@ -42,8 +42,8 @@ export function onlyResolvesLast<T extends (...args: any[]) => any>(
   let promisePrevious: ReturnType<typeof makeQueryablePromise>;
 
   const wrappedFunction = (...args: ArgumentsType<T>) => {
+    promisePrevious && promisePrevious.isPending && promisePrevious.isPending() && onCancel && onCancel();
     cancelPrevious && cancelPrevious();
-    promisePrevious && promisePrevious.isPending && !promisePrevious.isPending() && onCancel && onCancel();
     const initialPromise = asyncFunction(...args);
     const { promise, cancel } = createImperativePromise(initialPromise);
     cancelPrevious = cancel;
